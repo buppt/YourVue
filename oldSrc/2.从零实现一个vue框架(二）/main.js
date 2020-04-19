@@ -5,7 +5,7 @@ new YourVue({
   data: {
       count: 0,
       message: 'message',
-      array: []
+      log:1
   },
   template: `
       <div>
@@ -13,17 +13,20 @@ new YourVue({
           <button :onclick="addCount" class="test">addCount</button>
           <h2>{{message}}</h2>
           <button :onclick="decCount">decCount</button>
-          <h3>{{array}}</h3>
       </div>
   `,
   methods:{
       addCount(){
-        this.count += 1
-        this.array.push(0)
+          const count = this.count + 1
+          this.setState({
+              count
+          })
       },
       decCount(){
-        this.count -= 1
-        this.array.pop()
+        const count = this.count - 1
+        this.setState({
+            count
+        })
       }
   }
 })

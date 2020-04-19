@@ -1,27 +1,19 @@
-import { Dep } from './dep'
-import { def, arrayMethods } from './array'
+import {Dep} from './dep'
 class Observer{
-    constructor(value) {
-        this.value = value
-        this.dep = new Dep()
-        def(value, '__ob__', this)
-        if(Array.isArray(value)){
-            value.__proto__ = arrayMethods
-            this.observeArray(value)
+    constructor(data) {
+        this.data = data;
+        if(Array.isArray(data)){
+            observeArray(data)
         }else{
-            this.walk(value);
+            this.walk(data);
         }
     }
-    walk(value) {
-        Object.keys(value).forEach(function(key) {
-            defineReactive(value, key, value[key]);
+    walk(data) {
+        Object.keys(data).forEach(function(key) {
+            defineReactive(data, key, data[key]);
         });
     }
-    observeArray(value){
-        value.forEach(item => {
-            observe(item)
-        })
-    }
+    
 }
 
 export function observe(value) {
@@ -31,12 +23,10 @@ export function observe(value) {
     return new Observer(value);
 }
 
-function defineReactive(value, key, val) {
+function defineReactive(data, key, val) {
     const dep = new Dep();
     let childOb = observe(val);
-    console.log(childOb);
-    
-    Object.defineProperty(value, key, {
+    Object.defineProperty(data, key, {
         enumerable: true,
         configurable: true,
         get: function() {
@@ -56,4 +46,10 @@ function defineReactive(value, key, val) {
             dep.notify();
         }
     });
+}
+
+function observeArray(data){
+    data.forEach(item => {
+        observe(item)
+    })
 }

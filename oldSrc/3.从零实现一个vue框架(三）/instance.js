@@ -12,8 +12,6 @@ export default class YourVue{
         new Watcher(this, this._render.bind(this), noop)
     }
     _render(){
-        console.log('render');
-        
         let el = this.$options.el
         el = el && query(el)
         if(this.$options.template){
