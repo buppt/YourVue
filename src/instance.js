@@ -1,25 +1,24 @@
 import { templateToDom } from './compiler'
-
+import { observe } from './observer/index'
+import { Watcher} from './observer/watcher'
 export default class YourVue{
     constructor(options){
         this.$options = options
         initEvent(this)
         initData(this)
-        this.$mount(this.$options.el)
+        this.$mount()
     }
-    $mount(el){
+    $mount(){
+        new Watcher(this, this._render.bind(this), noop)
+    }
+    _render(){
+        let el = this.$options.el
         el = el && query(el)
         if(this.$options.template){
             this.el = templateToDom(this.$options.template, this)
             el.innerHTML = ''
             el.appendChild(this.el)
         }
-    }
-    setState(data){
-        Object.keys(data).forEach(key => {
-            this[key] = data[key]
-        })
-        this.$mount(this.$options.el)
     }
 }
 
@@ -49,6 +48,7 @@ function initData(vm){
     Object.keys(data).forEach(key => {
         proxy(vm, '_data', key)
     })
+    observe(data)
 }
 function noop () {}
 const sharedPropertyDefinition = {
