@@ -1,8 +1,32 @@
-import Vue from 'vue'
-import App from './App.vue'
+import YourVue from './instance'
 
-Vue.config.productionTip = false
-
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+new YourVue({
+  el: '#app',
+  data: {
+      count: 0,
+      message: 'message',
+      log:1
+  },
+  template: `
+      <div>
+          <div>{{count}} : {{message}}</div>
+          <button :onclick="addCount" class="test">addCount</button>
+          <h2>{{message}}</h2>
+          <button :onclick="decCount">decCount</button>
+      </div>
+  `,
+  methods:{
+      addCount(){
+          const count = this.count + 1
+          this.setState({
+              count
+          })
+      },
+      decCount(){
+        const count = this.count - 1
+        this.setState({
+            count
+        })
+      }
+  }
+})

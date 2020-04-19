@@ -1,5 +1,7 @@
 # yourvue
 
+学习 vue 源码的最好方法，就是自己实现一个！
+
 ## Project setup
 ```
 yarn install
