@@ -10,9 +10,9 @@ new YourVue({
   template: `
       <div>
           <div>{{count}} : {{message}}</div>
-          <button @click="addCount" class="test">addCount</button>
-          <h2 style="color: red">{{message}}</h2>
-          <button @click="decCount">decCount</button>
+          <button :onclick="addCount" class="test">addCount</button>
+          <h2>{{message}}</h2>
+          <button :onclick="decCount">decCount</button>
           <h3>{{array}}</h3>
       </div>
   `,

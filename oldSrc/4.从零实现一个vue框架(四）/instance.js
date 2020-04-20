@@ -1,7 +1,6 @@
-import { templateToVnode } from './compiler'
+import { templateToDom } from './compiler'
 import { observe } from './observer/index'
-import { Watcher } from './observer/watcher'
-import { patch } from './vdom/patch'
+import { Watcher} from './observer/watcher'
 export default class YourVue{
     constructor(options){
         this.$options = options
@@ -10,25 +9,17 @@ export default class YourVue{
         this.$mount()
     }
     $mount(){
-        let el = this.$options.el
-        this.el = el && query(el)
-        new Watcher(this, this.update.bind(this), noop)
+        new Watcher(this, this._render.bind(this), noop)
     }
-    update(){
+    _render(){
+        console.log('render');
+        
+        let el = this.$options.el
+        el = el && query(el)
         if(this.$options.template){
-            if(this.mount){
-                console.log('update')
-                const vnode = templateToVnode(this.$options.template, this)
-                // eslint-disable-next-line no-debugger
-                // debugger
-                patch(this.vnode, vnode)
-                this.vnode = vnode
-            }else{
-                console.log('mount');
-                this.vnode = templateToVnode(this.$options.template, this)
-                patch(this.vnode, null, this.el)
-                this.mount = true
-            }
+            this.el = templateToDom(this.$options.template, this)
+            el.innerHTML = ''
+            el.appendChild(this.el)
         }
     }
 }
