@@ -1,6 +1,8 @@
 import { VNode } from './vnode'
 export function patch (oldVnode, vnode, el) {
-  if(isUndef(vnode) && el){
+  //eslint-disable-next-line no-debugger
+                // debugger
+  if(isUndef(vnode)){
       createElm(oldVnode, el)
       return
   }
@@ -141,6 +143,9 @@ function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
 }
 
 function createElm (vnode, parentElm, afterElm = undefined) {
+  if (createComponent(vnode, parentElm, afterElm)) {
+    return
+  }
   let element = document.createElement(vnode.tag)
   console.log('createElement', vnode.tag)
   
@@ -148,7 +153,7 @@ function createElm (vnode, parentElm, afterElm = undefined) {
       if(key === 'on') {
           const on = vnode.props[key]
           Object.keys(on).forEach(event => {
-              console.log(vnode.tag, event, on[event]);
+              console.log('event',vnode.tag, event, on[event],element);
               element.addEventListener(event, on[event])
           })
       } else {
@@ -166,7 +171,7 @@ function createElm (vnode, parentElm, afterElm = undefined) {
   vnode.elm = element;
   if(isDef(afterElm)){
     insertBefore(parentElm,element,afterElm)
-  }else{
+  }else if(parentElm){
     parentElm.appendChild(element)
   }
   return element;
@@ -183,4 +188,24 @@ function isDef (v) {
 
 function isUndef(v){
   return v === undefined || v === null || v === ''
+}
+
+function createComponent (vnode, parentElm, afterElm) {
+  let i = vnode.props
+  if (i) {
+    if (i.hooks&&i.hooks.init) {
+      i.hooks.init(vnode)
+    }
+    if (isDef(vnode.componentInstance)) {
+      vnode.elm = vnode.componentInstance.vnode.elm
+      console.log(parentElm,vnode.componentInstance,vnode.elm);
+      
+      if(isDef(afterElm)){
+        insertBefore(parentElm,vnode.elm,afterElm)
+      }else if(parentElm){
+        parentElm.appendChild(vnode.elm)
+      }
+      return true
+    }
+  }
 }

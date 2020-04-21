@@ -2,16 +2,21 @@ import { templateToVnode } from './compiler'
 import { observe } from './observer/index'
 import { Watcher } from './observer/watcher'
 import { patch } from './vdom/patch'
+
+let cid = 1
 export default class YourVue{
     constructor(options){
+        this._init(options)
+    }
+    _init(options){
         this.$options = options
         initEvent(this)
         initData(this)
-        this.$mount()
+        if(options.el){
+            this.$mount()
+        }
     }
     $mount(){
-        let el = this.$options.el
-        this.el = el && query(el)
         new Watcher(this, this.update.bind(this), noop)
     }
     update(){
@@ -19,19 +24,42 @@ export default class YourVue{
             if(this.mount){
                 console.log('update')
                 const vnode = templateToVnode(this.$options.template, this)
-                // eslint-disable-next-line no-debugger
-                // debugger
                 patch(this.vnode, vnode)
                 this.vnode = vnode
             }else{
                 console.log('mount');
                 this.vnode = templateToVnode(this.$options.template, this)
+                let el = this.$options.el
+                this.el = el && query(el)
                 patch(this.vnode, null, this.el)
                 this.mount = true
             }
         }
     }
+    static extend(extendOptions){
+        extendOptions = extendOptions || {}
+        const Super = this
+        const SuperId = Super.cid
+        console.log('superid', SuperId);
+        
+        const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
+        if (cachedCtors[SuperId]) {
+            return cachedCtors[SuperId]
+        }
+        const Sub = function VueComponent (options) {
+            this._init(mergeOptions(options,extendOptions))
+        }
+        Sub.prototype = Object.create(Super.prototype)
+        Sub.prototype.constructor = Sub
+        Sub.cid = cid++
+        Sub['super'] = Super
+        Sub.extend = Super.extend
+        cachedCtors[SuperId] = Sub
+        return Sub
+    }
 }
+
+YourVue.cid = 0
 
 function query(el){
     if(typeof el === 'string'){
@@ -45,13 +73,15 @@ function query(el){
     }
 }
 function initEvent(vm){
-    let event = vm.$options.methods
-    Object.keys(event).forEach(key => {
-        vm[key] = event[key].bind(vm)
-    })
+    const event = vm.$options && vm.$options.methods
+    if(event){
+        Object.keys(event).forEach(key => {
+            vm[key] = event[key].bind(vm)
+        })
+    }
 }
 function initData(vm){
-    let data = vm.$options.data
+    let data = vm.$options && vm.$options.data
     vm._data = data
     data = vm._data = typeof data === 'function'
         ? data.call(vm, vm)
@@ -77,4 +107,13 @@ function proxy (target, sourceKey, key) {
         this[sourceKey][key] = val
     }
     Object.defineProperty(target, key, sharedPropertyDefinition)
+}
+
+function mergeOptions(obj1, obj2){
+    if(obj2){
+        Object.keys(obj2).forEach(key => {
+            obj1[key] = obj2[key]
+        })
+    }
+    return obj1
 }
