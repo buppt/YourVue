@@ -76,6 +76,8 @@ function isHTMLtag(tag){
 
 function componentToVNode(ast, vm){
     let tag = ast.tag
+    console.log('compontent', tag);
+    
     if(tag.includes('-')){
         tag = toHump(tag)
     }
@@ -96,6 +98,8 @@ function componentToVNode(ast, vm){
         data, undefined, undefined, undefined, vm,
         { Ctor, tag }
     )
+    console.log('vnode',vnode);
+    
     return vnode
 }
 

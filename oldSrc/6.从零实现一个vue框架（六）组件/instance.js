@@ -2,7 +2,6 @@ import { templateToVnode } from './compiler'
 import { observe } from './observer/index'
 import { Watcher } from './observer/watcher'
 import { patch } from './vdom/patch'
-import { callHook } from './lifecycle'
 
 let cid = 1
 export default class YourVue{
@@ -12,33 +11,28 @@ export default class YourVue{
     _init(options){
         this.$options = options
         initEvent(this)
-        callHook(this, 'beforeCreate')
         initData(this)
-        callHook(this, 'created')
         if(options.el){
             this.$mount()
         }
     }
     $mount(){
-        const vm = this
-        new Watcher(vm, vm.update.bind(vm), noop)
+        new Watcher(this, this.update.bind(this), noop)
     }
     update(){
         if(this.$options.template){
-            if(this._isMounted){
-                callHook(this, 'beforeUpdate')
+            if(this.mount){
+                console.log('update')
                 const vnode = templateToVnode(this.$options.template, this)
                 patch(this.vnode, vnode)
                 this.vnode = vnode
-                callHook(this, 'updated')
             }else{
-                callHook(this, 'beforeMount')
+                console.log('mount');
                 this.vnode = templateToVnode(this.$options.template, this)
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
-                this._isMounted = true
-                callHook(this, 'mounted')
+                this.mount = true
             }
         }
     }
@@ -46,6 +40,8 @@ export default class YourVue{
         extendOptions = extendOptions || {}
         const Super = this
         const SuperId = Super.cid
+        console.log('superid', SuperId);
+        
         const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
         if (cachedCtors[SuperId]) {
             return cachedCtors[SuperId]

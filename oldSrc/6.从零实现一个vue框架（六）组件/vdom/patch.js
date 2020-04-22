@@ -153,6 +153,7 @@ function createElm (vnode, parentElm, afterElm = undefined) {
       if(key === 'on') {
           const on = vnode.props[key]
           Object.keys(on).forEach(event => {
+              console.log('event',vnode.tag, event, on[event],element);
               element.addEventListener(event, on[event])
           })
       } else {
@@ -197,6 +198,8 @@ function createComponent (vnode, parentElm, afterElm) {
     }
     if (isDef(vnode.componentInstance)) {
       vnode.elm = vnode.componentInstance.vnode.elm
+      console.log(parentElm,vnode.componentInstance,vnode.elm);
+      
       if(isDef(afterElm)){
         insertBefore(parentElm,vnode.elm,afterElm)
       }else if(parentElm){

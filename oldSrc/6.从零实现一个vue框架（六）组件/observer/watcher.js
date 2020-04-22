@@ -1,7 +1,5 @@
 
 import {pushTarget, popTarget} from './dep'
-import {nextTick} from '../next-tick'
-let uid = 0
 export class Watcher{
     constructor(vm, expOrFn, cb){
         this.cb = cb;
@@ -11,11 +9,11 @@ export class Watcher{
         this.newDeps = []
         this.depIds = new Set()
         this.newDepIds = new Set()
-        this.value = this.get()
-        this.id = ++uid
+        this.value = this.get();
+
     }
     update(){
-        queueWatcher(this)
+        this.run();
     }
     run(){
         const value = this.get()
@@ -61,47 +59,3 @@ export class Watcher{
         this.newDeps.length = 0
     }
 }
-
-const queue = []
-let has = {}
-let waiting = false
-let flushing = false
-let index = 0
-
-function queueWatcher(watcher){
-    const id = watcher.id
-    if (has[id] == null) {
-        has[id] = true
-        if (!flushing) {
-            queue.push(watcher)
-          } else {
-            let i = queue.length - 1
-            while (i > index && queue[i].id > watcher.id) {
-              i--
-            }
-            queue.splice(i + 1, 0, watcher)
-          }
-    }
-    if (!waiting) {
-        waiting = true
-        nextTick(flushSchedulerQueue)
-    }
-}
-
-function flushSchedulerQueue(){
-    flushing = true
-    queue.sort((a, b) => a.id - b.id)
-    for (index = 0; index < queue.length; index++) {
-        const watcher = queue[index]
-        const id = watcher.id
-        has[id] = null
-        watcher.run()
-    }
-    resetSchedulerState()
-}
-
-function resetSchedulerState () {
-    index = queue.length = 0
-    has = {}
-    waiting = flushing = false
-  }

@@ -27,18 +27,6 @@ const helloWorld = {
                 this.array.pop()
             }
         }
-    },
-    created(){
-      console.log('created')
-    },
-    mounted(){
-      console.log('mounted',this.count)
-    },
-    beforeUpdate(){
-      console.log('beforeUpdate');
-    },
-    updated(){
-      console.log('updated')
     }
   }
 
@@ -66,17 +54,5 @@ new YourVue({
       <hello-world2 :message="message"></hello-world2>
     <div>
   `,
-  created(){
-    console.log('1created')
-  },
-  mounted(){
-    console.log('1mounted',this.count)
-  },
-  beforeUpdate(){
-    console.log('1beforeUpdate');
-  },
-  updated(){
-    console.log('1updated')
-  }
 })
 
