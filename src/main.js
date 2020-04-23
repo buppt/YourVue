@@ -5,21 +5,33 @@ const helloWorld = {
     data: {
         count: 0,
         message: 'message',
-        array: []
+        array: [],
+        watchMes: ''
     },
     template: `
         <div>
             <div>{{count}} : {{message}}</div>
             <button @click="addCount" class="test">addCount</button>
-            <h2 style="color: red">{{message}}</h2>
+            <h2 style="color: red">{{reversedMessage}}</h2>
             <button @click="decCount">decCount</button>
-            <h3>{{array}}</h3>
+            <h3>{{array}}{{watchMes}}</h3>
         </div>
     `,
+    computed: {
+      reversedMessage: function () {
+        return this.message.split('').reverse().join('')
+      }
+    },
+    watch: {
+      message: function (newMes, oldMes) {
+        this.watchMes = newMes
+      }
+    },
     methods:{
         addCount(){
           this.count += 1
           this.array.push(0)
+          this.message += this.count 
         },
         decCount(){
             this.count -= 1

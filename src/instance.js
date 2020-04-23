@@ -1,6 +1,7 @@
 import { templateToVnode } from './compiler'
 import { observe,defineReactive } from './observer/index'
 import { Watcher } from './observer/watcher'
+import  {Dep } from './observer/dep'
 import { patch } from './vdom/patch'
 import { callHook } from './lifecycle'
 
@@ -13,9 +14,9 @@ export default class YourVue{
         this.$options = options
         initEvent(this)
         callHook(this, 'beforeCreate')
-        if(options.data){
-            initData(this)
-        }
+        if(options.data) initData(this)
+        if (options.computed) initComputed(this, options.computed)
+        if (options.watch) initWatch(this, options.watch)
         callHook(this, 'created')
         if(options.el){
             this.$mount()
@@ -122,4 +123,84 @@ function mergeOptions(obj1, obj2){
         })
     }
     return obj1
+}
+
+
+const computedWatcherOptions = { lazy: true }
+
+function initComputed(vm, computed){
+    const watchers = vm._computedWatchers = Object.create(null)
+    for (const key in computed) {
+        const userDef = computed[key]
+        const getter = typeof userDef === 'function' ? userDef : userDef.get
+        watchers[key] = new Watcher(
+            vm,
+            getter || noop,
+            noop,
+            computedWatcherOptions
+        )
+        if (!(key in vm)) {
+          defineComputed(vm, key, userDef)
+        }
+    }
+}
+function defineComputed(vm, key, userDef){    
+    sharedPropertyDefinition.get = createComputedGetter(key)
+    sharedPropertyDefinition.set = noop
+    Object.defineProperty(vm, key, sharedPropertyDefinition)
+}
+
+function createComputedGetter (key) {
+    return function computedGetter () {
+        const watcher = this._computedWatchers && this._computedWatchers[key]
+        if (watcher) {
+            if (watcher.dirty) {
+                watcher.evaluate()
+            }
+            if (Dep.target) {
+                watcher.depend()
+            }
+            return watcher.value
+        }
+    }
+}
+
+function initWatch(vm, watch){
+    for (const key in watch) {
+        const handler = watch[key]
+        if (Array.isArray(handler)) {
+          for (let i = 0; i < handler.length; i++) {
+            createWatcher(vm, key, handler[i])
+          }
+        } else {
+          createWatcher(vm, key, handler)
+        }
+      }
+}
+
+function createWatcher(vm, expOrFn, handler, options){
+    if (typeof handler === 'string') {
+        handler = vm[handler]
+    }
+    return vm.$watch(expOrFn, handler, options)
+}
+
+YourVue.prototype.$watch = function (expOrFn, cb, options) {
+    const vm = this
+    if (isPlainObject(cb)) {
+      return createWatcher(vm, expOrFn, cb, options)
+    }
+    options = options || {}
+    options.user = true
+    const watcher = new Watcher(vm, expOrFn, cb, options)
+    if (options.immediate) {
+        cb.call(vm, watcher.value)
+
+    }
+    return function unwatchFn () {
+      watcher.teardown()
+    }
+}
+function isPlainObject(obj){
+    Object.prototype.toString.call(obj) === '[object Object]'
 }

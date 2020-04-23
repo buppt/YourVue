@@ -3,19 +3,48 @@ import {pushTarget, popTarget} from './dep'
 import {nextTick} from '../next-tick'
 let uid = 0
 export class Watcher{
-    constructor(vm, expOrFn, cb){
+    constructor(vm, expOrFn, cb, options){
         this.cb = cb;
         this.vm = vm;
-        this.getter = expOrFn
         this.deps = []
         this.newDeps = []
         this.depIds = new Set()
         this.newDepIds = new Set()
-        this.value = this.get()
+        if (options) {
+            this.deep = !!options.deep
+            this.user = !!options.user
+            this.lazy = !!options.lazy
+            this.sync = !!options.sync
+            this.before = options.before
+        } else {
+            this.deep = this.user = this.lazy = this.sync = false
+        }
+        if (typeof expOrFn === 'function') {
+            this.getter = expOrFn
+        } else {
+            const segments = expOrFn.split('.')
+            this.getter = function (obj) {
+                for (let i = 0; i < segments.length; i++) {
+                if (!obj) return
+                obj = obj[segments[i]]
+                }
+                return obj
+            }
+        }
+        this.dirty = this.lazy
+        this.value = this.lazy
+            ? undefined
+            : this.get()
         this.id = ++uid
     }
     update(){
-        queueWatcher(this)
+        if (this.lazy) {
+            this.dirty = true
+        } else if (this.sync) {
+            this.run()
+        } else {
+            queueWatcher(this)
+        }
     }
     run(){
         const value = this.get()
@@ -27,8 +56,13 @@ export class Watcher{
     }
     get(){
         pushTarget(this)
+        let value
         const vm = this.vm
-        const value = this.getter.call(vm, vm)
+        try {
+            value = this.getter.call(vm, vm)
+          } catch (e) {
+              console.log(e)
+          }
         popTarget()
         this.cleanupDeps()
         return value;
@@ -59,6 +93,34 @@ export class Watcher{
         this.deps = this.newDeps
         this.newDeps = tmp
         this.newDeps.length = 0
+    }
+    evaluate () {
+        this.value = this.get()
+        this.dirty = false
+    }
+    depend () {
+        let i = this.deps.length
+        while (i--) {
+          this.deps[i].depend()
+        }
+      }
+    teardown () {
+        if (this.active) {
+            if (!this.vm._isBeingDestroyed) {
+            const arr = this.vm._watchers
+            if (arr.length) {
+                const index = arr.indexOf(this)
+                if (index > -1) {
+                    arr.splice(index, 1)
+                }
+                }
+            }
+            let i = this.deps.length
+            while (i--) {
+                this.deps[i].removeSub(this)
+            }
+            this.active = false
+        }
     }
 }
 
