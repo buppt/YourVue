@@ -1,5 +1,7 @@
-import YourVue from './instance'
+import YourVue,{proxy} from './instance'
 import { VNode } from './vdom/vnode'
+import {defineReactive} from './observer/index'
+import {patch} from './vdom/patch'
 
 const vueCompiler = require('./vueCompiler')
 
@@ -88,13 +90,24 @@ function componentToVNode(ast, vm){
                 _isComponent: true,
                 _parentVnode: vnode
                 })
+            initProps(child, vnode.props)
             child.$mount()
-        }
+        },
+        prepatch (oldVnode, vnode) {
+            const options = vnode.componentOptions
+            const child = vnode.componentInstance = oldVnode.componentInstance
+            for (const key in options.data) {
+                if(key === 'on' || key === 'hooks'){
+                    continue
+                }                
+                child._props[key] = options.data[key]
+            }
+          }
     }
     const vnode = new VNode(
         `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
         data, undefined, undefined, undefined, vm,
-        { Ctor, tag }
+        { Ctor, tag, data}
     )
     return vnode
 }
@@ -103,4 +116,17 @@ function toHump(name) {
     return name.replace(/-(\w)/g, function(all, letter){
         return letter.toUpperCase();
     });
+}
+
+function initProps(vm, propsOptions){
+    const props = vm._props = {}
+    for (const key in propsOptions) {
+        if(key === 'on' || key === 'hooks'){
+            continue
+        }
+        defineReactive(props, key, propsOptions[key])
+        if (!(key in vm)) {
+            proxy(vm, `_props`, key)
+        }
+    }
 }

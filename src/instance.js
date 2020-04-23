@@ -1,5 +1,5 @@
 import { templateToVnode } from './compiler'
-import { observe } from './observer/index'
+import { observe,defineReactive } from './observer/index'
 import { Watcher } from './observer/watcher'
 import { patch } from './vdom/patch'
 import { callHook } from './lifecycle'
@@ -13,7 +13,9 @@ export default class YourVue{
         this.$options = options
         initEvent(this)
         callHook(this, 'beforeCreate')
-        initData(this)
+        if(options.data){
+            initData(this)
+        }
         callHook(this, 'created')
         if(options.el){
             this.$mount()
@@ -103,7 +105,7 @@ const sharedPropertyDefinition = {
     set: noop
 }
 
-function proxy (target, sourceKey, key) {
+export function proxy (target, sourceKey, key) {
     sharedPropertyDefinition.get = function proxyGetter () {
         return this[sourceKey][key]
     }

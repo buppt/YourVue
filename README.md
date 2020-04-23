@@ -11,12 +11,12 @@
 - [x] component
 - [x] lifecycle
 - [x] next-tick
-- [] watch computed
-- [] event
-- [] slot
-- [] v-if v-for ...
-- [] vue-router
-- [] vuex
+- [ ] watch computed
+- [ ] event
+- [ ] slot
+- [ ] v-if v-for ...
+- [ ] vue-router
+- [ ] vuex
 
 ## Project setup
 ```

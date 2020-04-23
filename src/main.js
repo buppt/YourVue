@@ -46,9 +46,10 @@ const helloWorld = {
     data: {
         count: 0,
     },
+    props:['message'],
     template: `
         <div>
-            <div style="color: green">{{count}}</div>
+            <div style="color: green">{{count}}:{{message}}</div>
             <button @click="addCount" class="test">addCount</button>
         </div>
     `,
@@ -61,11 +62,18 @@ const helloWorld = {
 new YourVue({
   el: '#app',
   components:{ helloWorld, helloWorld2 },
+  data:{ message:'parent' },
   template: `<div>
       <hello-world :message="message"></hello-world>
       <hello-world2 :message="message"></hello-world2>
-    <div>
+      <button @click="change">change parent</button>
+    </div>
   `,
+  methods:{
+    change(){
+      this.message += 'change'
+    }
+  },
   created(){
     console.log('1created')
   },

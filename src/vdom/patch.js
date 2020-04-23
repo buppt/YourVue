@@ -31,6 +31,11 @@ function sameInputType (a, b) {
   return a.props.type == b.props.type
 }
 function patchVnode(oldVnode, vnode){
+  let i
+  const data = vnode.props
+  if (isDef(data) && isDef(i = data.hooks) && isDef(i = i.prepatch)) {
+    i(oldVnode, vnode)
+  }
   const ch = vnode.children
   const oldCh = oldVnode.children
   const elm = vnode.elm = oldVnode.elm
