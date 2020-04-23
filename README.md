@@ -11,7 +11,7 @@
 - [x] component
 - [x] lifecycle
 - [x] next-tick
-- [ ] watch computed
+- [x] watch computed
 - [ ] event
 - [ ] slot
 - [ ] v-if v-for ...
