@@ -156,10 +156,9 @@ function createElm (vnode, parentElm, afterElm = undefined) {
   
   for(let key in vnode.props){
       if(key === 'on') {
-          const on = vnode.props[key]
-          Object.keys(on).forEach(event => {
-              element.addEventListener(event, on[event])
-          })
+          const on = vnode.props[key] || {}
+          const oldOn = {}
+          updateListeners(element, vnode.props[key], oldOn, vnode.context)
       } else {
         element.setAttribute(key,vnode.props[key])
       }
@@ -210,4 +209,34 @@ function createComponent (vnode, parentElm, afterElm) {
       return true
     }
   }
+}
+
+function updateListeners(elm, on, oldOn, context){
+  for (let name in on) {
+    let cur = on[name]
+    let old = oldOn[name]
+    if(isUndef(old)){
+      if (isUndef(cur.fns)) {
+        cur = on[name] = createFnInvoker(cur)
+      }
+      elm.addEventListener(name, cur)
+    }else if(event !== old){
+      old.fns = cur
+      on[name] = old
+    }
+  }
+  for (let name in oldOn) {
+    if (isUndef(on[name])) {
+      elm.removeEventListener(name, oldOn[name])
+    }
+  }
+}
+
+function createFnInvoker(fns){
+  function invoker () {
+      const fns = invoker.fns
+      return fns.apply(null, arguments)
+  }
+  invoker.fns = fns
+  return invoker
 }
