@@ -1,7 +1,5 @@
 import { VNode } from './vnode'
 export function patch (oldVnode, vnode, el) {
-  //eslint-disable-next-line no-debugger
-                // debugger
   if(isUndef(vnode)){
       createElm(oldVnode, el)
       return
@@ -151,18 +149,32 @@ function createElm (vnode, parentElm, afterElm = undefined) {
   if (createComponent(vnode, parentElm, afterElm)) {
     return
   }
-  let element = document.createElement(vnode.tag)
-  console.log('createElement', vnode.tag)
-  
-  for(let key in vnode.props){
-      if(key === 'on') {
-          const on = vnode.props[key] || {}
-          const oldOn = {}
-          updateListeners(element, vnode.props[key], oldOn, vnode.context)
-      } else {
-        element.setAttribute(key,vnode.props[key])
-      }
+  if(!vnode.tag && vnode.text){
+    vnode.elm = document.createTextNode(vnode.text);
+    parentElm.appendChild(vnode.elm)
+    return
   }
+  let element = document.createElement(vnode.tag)
+  if(vnode.props.attrs){
+    const attrs = vnode.props.attrs
+    for(let key in attrs){
+      element.setAttribute(key, attrs[key])
+    }
+  }
+  if(vnode.props.on){
+    const on = vnode.props.on
+    const oldOn = {}
+    updateListeners(element, on, oldOn, vnode.context)
+  }
+  // for(let key in vnode.props){
+  //     if(key === 'on') {
+  //         const on = vnode.props[key] || {}
+  //         const oldOn = {}
+  //         updateListeners(element, vnode.props[key], oldOn, vnode.context)
+  //     } else {
+  //       element.setAttribute(key,vnode.props[key])
+  //     }
+  // }
   for(let child of vnode.children){
       if(child instanceof VNode){
           createElm(child, element)

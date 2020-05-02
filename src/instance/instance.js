@@ -1,9 +1,11 @@
-import { templateToVnode } from './compiler'
-import { observe,defineReactive } from './observer/index'
-import { Watcher } from './observer/watcher'
-import  {Dep } from './observer/dep'
-import { patch } from './vdom/patch'
+import { templateToCode } from '../compiler/compiler'
+import { observe,defineReactive } from '../observer/index'
+import { Watcher } from '../observer/watcher'
+import { Dep } from '../observer/dep'
+import { patch } from '../vdom/patch'
 import { callHook } from './lifecycle'
+import { initRender } from './render'
+import {initComputed} from './computed'
 
 let cid = 1
 export default class YourVue{
@@ -13,6 +15,7 @@ export default class YourVue{
     _init(options){
         this.$options = options
         initEvent(this)
+        initRender(this)
         callHook(this, 'beforeCreate')
         if(options.data) initData(this)
         if (options.computed) initComputed(this, options.computed)
@@ -23,6 +26,16 @@ export default class YourVue{
         }
     }
     $mount(){
+        const options = this.$options
+        if (!options.render) {
+            let template = options.template
+            if (template) {
+                const code = templateToCode(template)
+                console.log(code)
+                const render = new Function(code).bind(this)
+                options.render = render
+            }
+        }
         const vm = this
         new Watcher(vm, vm.update.bind(vm), noop)
     }
@@ -30,13 +43,13 @@ export default class YourVue{
         if(this.$options.template){
             if(this._isMounted){
                 callHook(this, 'beforeUpdate')
-                const vnode = templateToVnode(this.$options.template, this)
+                const vnode = this.$options.render()
                 patch(this.vnode, vnode)
                 this.vnode = vnode
                 callHook(this, 'updated')
             }else{
                 callHook(this, 'beforeMount')
-                this.vnode = templateToVnode(this.$options.template, this)
+                this.vnode = this.$options.render()
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
@@ -98,8 +111,8 @@ function initData(vm){
     })
     observe(data)
 }
-function noop () {}
-const sharedPropertyDefinition = {
+export function noop () {}
+export const sharedPropertyDefinition = {
     enumerable: true,
     configurable: true,
     get: noop,
@@ -126,44 +139,6 @@ function mergeOptions(obj1, obj2){
 }
 
 
-const computedWatcherOptions = { lazy: true }
-
-function initComputed(vm, computed){
-    const watchers = vm._computedWatchers = Object.create(null)
-    for (const key in computed) {
-        const userDef = computed[key]
-        const getter = typeof userDef === 'function' ? userDef : userDef.get
-        watchers[key] = new Watcher(
-            vm,
-            getter || noop,
-            noop,
-            computedWatcherOptions
-        )
-        if (!(key in vm)) {
-          defineComputed(vm, key, userDef)
-        }
-    }
-}
-function defineComputed(vm, key, userDef){    
-    sharedPropertyDefinition.get = createComputedGetter(key)
-    sharedPropertyDefinition.set = noop
-    Object.defineProperty(vm, key, sharedPropertyDefinition)
-}
-
-function createComputedGetter (key) {
-    return function computedGetter () {
-        const watcher = this._computedWatchers && this._computedWatchers[key]
-        if (watcher) {
-            if (watcher.dirty) {
-                watcher.evaluate()
-            }
-            if (Dep.target) {
-                watcher.depend()
-            }
-            return watcher.value
-        }
-    }
-}
 
 function initWatch(vm, watch){
     for (const key in watch) {

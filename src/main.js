@@ -1,4 +1,4 @@
-import YourVue from './instance'
+import YourVue from './instance/instance'
 import Vue from 'vue'
 
 const helloWorld = {
@@ -31,7 +31,7 @@ const helloWorld = {
         addCount(){
           this.count += 1
           this.array.push(0)
-          this.message += this.count 
+          this.message += this.count
         },
         decCount(){
             this.count -= 1
@@ -71,6 +71,9 @@ const helloWorld = {
         }
     }
   }
+   //eslint-disable-next-line no-debugger
+  //  debugger
+  
 new YourVue({
   el: '#app',
   components:{ helloWorld, helloWorld2 },

@@ -14,12 +14,6 @@
 - [x] props
 - [x] watch computed
 
-为了使流程看起来简洁， compiler 只用了 vue 的 parse，没有用 gencode 和 render 函数，所以前面有些地方的实现和 vue 不太一样。
-
-这也导致后面的内容没有办法和 vue 使用相同的方法实现了。
-
-不过目前为止 vue 的关键流程都已经实现。
-
 - [x] event 没有完全实现
 - [ ] v-model
 - [ ] slot

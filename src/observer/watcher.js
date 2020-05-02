@@ -1,6 +1,6 @@
 
 import {pushTarget, popTarget} from './dep'
-import {nextTick} from '../next-tick'
+import {nextTick} from '../instance/next-tick'
 let uid = 0
 export class Watcher{
     constructor(vm, expOrFn, cb, options){
