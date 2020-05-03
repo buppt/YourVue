@@ -166,15 +166,7 @@ function createElm (vnode, parentElm, afterElm = undefined) {
     const oldOn = {}
     updateListeners(element, on, oldOn, vnode.context)
   }
-  // for(let key in vnode.props){
-  //     if(key === 'on') {
-  //         const on = vnode.props[key] || {}
-  //         const oldOn = {}
-  //         updateListeners(element, vnode.props[key], oldOn, vnode.context)
-  //     } else {
-  //       element.setAttribute(key,vnode.props[key])
-  //     }
-  // }
+
   for(let child of vnode.children){
       if(child instanceof VNode){
           createElm(child, element)

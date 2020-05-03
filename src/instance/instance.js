@@ -5,19 +5,25 @@ import { Dep } from '../observer/dep'
 import { patch } from '../vdom/patch'
 import { callHook } from './lifecycle'
 import { initRender } from './render'
-import {initComputed} from './computed'
+import { initComputed } from './computed'
+import { initMethod, initEvent, eventsMixin } from './event'
+import { initWatch, watchMixin } from './watch'
 
 let cid = 1
-export default class YourVue{
+class YourVue{
     constructor(options){
         this._init(options)
     }
     _init(options){
         this.$options = options
+        if(options._isComponent){
+            this._parentListeners = options._parentVnode.componentOptions.listeners
+        }
         initEvent(this)
         initRender(this)
         callHook(this, 'beforeCreate')
-        if(options.data) initData(this)
+        if (options.data) initData(this)
+        if (options.methods) initMethod(this)
         if (options.computed) initComputed(this, options.computed)
         if (options.watch) initWatch(this, options.watch)
         callHook(this, 'created')
@@ -92,14 +98,6 @@ function query(el){
         return el
     }
 }
-function initEvent(vm){
-    const event = vm.$options && vm.$options.methods
-    if(event){
-        Object.keys(event).forEach(key => {
-            vm[key] = event[key].bind(vm)
-        })
-    }
-}
 function initData(vm){
     let data = vm.$options && vm.$options.data
     vm._data = data
@@ -140,42 +138,6 @@ function mergeOptions(obj1, obj2){
 
 
 
-function initWatch(vm, watch){
-    for (const key in watch) {
-        const handler = watch[key]
-        if (Array.isArray(handler)) {
-          for (let i = 0; i < handler.length; i++) {
-            createWatcher(vm, key, handler[i])
-          }
-        } else {
-          createWatcher(vm, key, handler)
-        }
-      }
-}
-
-function createWatcher(vm, expOrFn, handler, options){
-    if (typeof handler === 'string') {
-        handler = vm[handler]
-    }
-    return vm.$watch(expOrFn, handler, options)
-}
-
-YourVue.prototype.$watch = function (expOrFn, cb, options) {
-    const vm = this
-    if (isPlainObject(cb)) {
-      return createWatcher(vm, expOrFn, cb, options)
-    }
-    options = options || {}
-    options.user = true
-    const watcher = new Watcher(vm, expOrFn, cb, options)
-    if (options.immediate) {
-        cb.call(vm, watcher.value)
-
-    }
-    return function unwatchFn () {
-      watcher.teardown()
-    }
-}
-function isPlainObject(obj){
-    Object.prototype.toString.call(obj) === '[object Object]'
-}
+watchMixin(YourVue)
+eventsMixin(YourVue)
+export default YourVue

@@ -68,6 +68,7 @@ const helloWorld = {
     methods:{
         addCount(){
           this.count += 1
+          this.$emit('select',this.count)
         }
     }
   }
@@ -80,13 +81,16 @@ new YourVue({
   data:{ message:'parent' },
   template: `<div>
       <hello-world :message="message"></hello-world>
-      <hello-world2 :message="message"></hello-world2>
+      <hello-world2 :message="message" @select="parentHandler"></hello-world2>
       <button @click="change">change parent</button>
     </div>
   `,
   methods:{
     change(){
       this.message += 'change'
+    },
+    parentHandler(value){
+      console.log('parentHandler', value)
     }
   },
   created(){

@@ -11,10 +11,11 @@
 - [x] component
 - [x] lifecycle
 - [x] next-tick
-- [x] props
+- [x] props (parent to child)
 - [x] watch computed
+- [x] event (dom & eventEmitter)
 
-- [x] event 没有完全实现
+实现中...
 - [ ] v-model
 - [ ] slot
 - [ ] v-if v-for ...

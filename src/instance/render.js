@@ -1,5 +1,5 @@
 import {VNode} from '../vdom/vnode'
-import {componentToVNode} from '../compiler/compiler'
+import {componentToVNode} from '../vdom/create-component'
 export function initRender(vm){
     vm._c = createElement
     vm._v = createTextVNode
