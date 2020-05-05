@@ -34,7 +34,7 @@ export function componentToVNode(tag, data, children, vm){
     const vnode = new VNode(
         `vue-component-${Ctor.cid}${name ? `-${name}` : ''}`,
         data, undefined, undefined, undefined, vm,
-        { Ctor, tag, data, listeners}
+        { Ctor, tag, data, listeners, children}
     )
     return vnode
 }

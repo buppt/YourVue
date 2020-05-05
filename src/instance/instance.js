@@ -37,7 +37,8 @@ class YourVue{
             let template = options.template
             if (template) {
                 const code = templateToCode(template)
-                console.log(code)
+                console.log(code);
+                
                 const render = new Function(code).bind(this)
                 options.render = render
             }
@@ -56,6 +57,8 @@ class YourVue{
             }else{
                 callHook(this, 'beforeMount')
                 this.vnode = this.$options.render()
+                console.log('render',this.vnode);
+                
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)

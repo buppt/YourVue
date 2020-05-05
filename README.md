@@ -16,9 +16,10 @@
 - [x] event (dom & eventEmitter)
 
 实现中...
-- [ ] v-model
 - [ ] slot
+- [ ] keep-alive
 - [ ] v-if v-for ...
+- [ ] directives
 - [ ] vue-router
 - [ ] vuex
 

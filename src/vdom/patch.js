@@ -17,6 +17,9 @@ export function patch (oldVnode, vnode, el) {
   }
 }
 function sameVnode (a, b) {
+  if(isUndef(a) || isUndef(b)){
+    return false
+  }
   return (
       a.key === b.key && 
       a.tagName=== b.tagName &&

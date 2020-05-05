@@ -4,13 +4,14 @@ export function generate(ast){
 }
 
 function genElement(el){
+  if (el.tag === 'slot') {
+    return genSlot(el)
+  } else {
     let code
     if (el.component) {
     //   code = genComponent(el.component, el)
     } else {
       let data = genData(el)
-      console.log(el, data);
-      
       const children = el.inlineTemplate ? null : genChildren(el, true)
       code = `_c('${el.tag}'${
         data ? `,${data}` : '' // data
@@ -19,6 +20,7 @@ function genElement(el){
       })`
     }
     return code
+  }
 }
 
 export function genChildren (el){
@@ -43,20 +45,12 @@ export function genChildren (el){
 
 function genData(el){
     let data = '{'
-    if (el.staticClass) {
-      data += `staticClass:${el.staticClass},`
-    }
-    if (el.classBinding) {
-      data += `class:${el.classBinding},`
-    }
     if (el.attrs) {
       data += `attrs:${genProps(el.attrs)},`
     }
-    // DOM props
     if (el.props) {
       data += `domProps:${genProps(el.props)},`
     }
-    // event handlers
     if (el.events) {
       data += `on:${genHandlers(el.events)},`
     }
@@ -66,29 +60,26 @@ function genData(el){
 
 function genProps (props){
   let staticProps = ``
-  let dynamicProps = ``
   for (let i = 0; i < props.length; i++) {
     const prop = props[i]
     const value = prop.value
-    if (prop.dynamic) {
-      dynamicProps += `${prop.name},${value},`
-    } else {
-      staticProps += `"${prop.name}":${value},`
-    }
+    staticProps += `"${prop.name}":${value},`
   }
   staticProps = `{${staticProps.slice(0, -1)}}`
-  if (dynamicProps) {
-    return `_d(${staticProps},[${dynamicProps.slice(0, -1)}])`
-  } else {
-    return staticProps
-  }
+  return staticProps
 }
 
 function genHandlers(events){
   let res = '{'
   for(let key in events){
-    res += key + ':' +events[key].value
+    res += key + ':' + events[key].value
   }
   res += '}'
   return res
+}
+
+function genSlot(el){
+  const slotName = el.slotName || '"default"'
+  const children = genChildren(el)
+  return `_t(${slotName}${children ? `,${children}` : ''})`
 }

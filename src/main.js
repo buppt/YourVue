@@ -63,6 +63,8 @@ const helloWorld = {
         <div>
             <div style="color: green">{{count}}:{{message}}</div>
             <button @click="addCount" class="test">addCount</button>
+            <slot name="head"></slot>
+            <slot></slot>
         </div>
     `,
     methods:{
@@ -81,7 +83,11 @@ new YourVue({
   data:{ message:'parent' },
   template: `<div>
       <hello-world :message="message"></hello-world>
-      <hello-world2 :message="message" @select="parentHandler"></hello-world2>
+      <hello-world2 :message="message" @select="parentHandler">
+          <p slot="head">head</p>
+          <p>slot test</p>
+          <p slot="foot">foot</p>
+      </hello-world2>
       <button @click="change">change parent</button>
     </div>
   `,
