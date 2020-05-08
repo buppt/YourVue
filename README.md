@@ -12,13 +12,13 @@
 - [x] lifecycle
 - [x] next-tick
 - [x] props (parent to child)
+- [x] v-if v-for
 - [x] watch computed
 - [x] event (dom & eventEmitter)
+- [x] slot (普通插槽)
 
 实现中...
-- [ ] slot
 - [ ] keep-alive
-- [ ] v-if v-for ...
 - [ ] directives
 - [ ] vue-router
 - [ ] vuex

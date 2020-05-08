@@ -1,76 +1,41 @@
 import YourVue from './instance/instance'
 import Vue from 'vue'
 
-const helloWorld = {
+  const helloWorld = {
     data: {
         count: 0,
-        message: 'message',
-        array: [],
-        watchMes: ''
-    },
-    template: `
-        <div>
-            <div>{{count}} : {{message}}</div>
-            <button @click="addCount" class="test">addCount</button>
-            <h2 style="color: red">{{reversedMessage}}</h2>
-            <button @click="decCount">decCount</button>
-            <h3>{{array}}{{watchMes}}</h3>
-        </div>
-    `,
-    computed: {
-      reversedMessage: function () {
-        return this.message.split('').reverse().join('')
-      }
-    },
-    watch: {
-      message: function (newMes, oldMes) {
-        this.watchMes = newMes
-      }
-    },
-    methods:{
-        addCount(){
-          this.count += 1
-          this.array.push(0)
-          this.message += this.count
-        },
-        decCount(){
-            this.count -= 1
-            if(this.array.length){
-                this.array.pop()
-            }
-        }
-    },
-    created(){
-      console.log('created')
-    },
-    mounted(){
-      console.log('mounted',this.count)
-    },
-    beforeUpdate(){
-      console.log('beforeUpdate');
-    },
-    updated(){
-      console.log('updated')
-    }
-  }
-
-  const helloWorld2 = {
-    data: {
-        count: 0,
+        items:[1,2,3,0,5],
+        flag: true
     },
     props:['message'],
     template: `
         <div>
-            <div style="color: green">{{count}}:{{message}}</div>
-            <button @click="addCount" class="test">addCount</button>
+          items: {{this.items}}
             <slot name="head"></slot>
             <slot></slot>
+            <div v-for="item in items">
+              <p>{{item}}</p>
+            </div>
+            <button @click="addCount">child button click:{{count}}</button>
+            <div v-if="flag">watch count v-if flag</div>
+            <div style="color: red">parent message: {{countMessage}}</div>
         </div>
     `,
+    watch:{
+      count: function (newMes, oldMes) {
+          this.flag = !this.flag
+      }
+    },
+    computed:{
+      countMessage: function () {
+        return this.message + this.count
+      }
+    },
     methods:{
         addCount(){
           this.count += 1
           this.$emit('select',this.count)
+          this.items.push(this.count)
         }
     }
   }
@@ -79,16 +44,17 @@ const helloWorld = {
   
 new YourVue({
   el: '#app',
-  components:{ helloWorld, helloWorld2 },
-  data:{ message:'parent' },
-  template: `<div>
-      <hello-world :message="message"></hello-world>
-      <hello-world2 :message="message" @select="parentHandler">
-          <p slot="head">head</p>
-          <p>slot test</p>
-          <p slot="foot">foot</p>
-      </hello-world2>
-      <button @click="change">change parent</button>
+  components:{ helloWorld },
+  data:{ message:'parent message' },
+  template: `
+    <div>
+      <hello-world :message="message" @select="parentHandler">
+          <p slot="head">slot head</p>
+          <p>slot default</p>
+          <p>slot default2</p>
+          <p slot="foot">slot foot</p>
+      </hello-world>
+      <button @click="change">change parent message</button>
     </div>
   `,
   methods:{
@@ -98,18 +64,6 @@ new YourVue({
     parentHandler(value){
       console.log('parentHandler', value)
     }
-  },
-  created(){
-    console.log('1created')
-  },
-  mounted(){
-    console.log('1mounted',this.count)
-  },
-  beforeUpdate(){
-    console.log('1beforeUpdate');
-  },
-  updated(){
-    console.log('1updated')
   }
 })
 

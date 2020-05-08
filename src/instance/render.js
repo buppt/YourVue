@@ -13,11 +13,12 @@ export function initRender(vm){
     vm._v = createTextVNode
     vm._s = toString
     vm._e = createEmptyVNode
-    vm._t = renderSlot 
+    vm._t = renderSlot
+    vm._l = renderList
 }
 function createElement (tag, data={}, children=[]){
+    children = simpleNormalizeChildren(children)
     if(isHTMLtag(tag)){
-      // if(tag === 'slot')
         return new VNode(tag, data, children, undefined, undefined)
     }else{
         return componentToVNode(tag, data, children, this)
@@ -76,10 +77,46 @@ function resolveSlots(children, context){
         name = child.props.attrs.slot
       }
       if(name){
-        slots[name] = child
+        (slots[name] || (slots[name] =[]) ).push(child)
       } else {
-        slots.default=child
+        (slots.default || (slots.default = [])).push(child)
       }
     }
     return slots
+}
+
+function renderList (val, render){
+    let ret, i, l, keys, key
+    if (Array.isArray(val) || typeof val === 'string') {
+      ret = new Array(val.length)
+      for (i = 0, l = val.length; i < l; i++) {
+        ret[i] = render(val[i], i)
+      }
+    } else if (typeof val === 'number') {
+      ret = new Array(val)
+      for (i = 0; i < val; i++) {
+        ret[i] = render(i + 1, i)
+      }
+    } else {
+        keys = Object.keys(val)
+        ret = new Array(keys.length)
+        for (i = 0, l = keys.length; i < l; i++) {
+          key = keys[i]
+          ret[i] = render(val[key], key, i)
+        }
+    }
+    if (!ret) {
+      ret = []
+    }
+    ret._isVList = true
+    return ret
+}
+
+export function simpleNormalizeChildren (children) {
+  for (let i = 0; i < children.length; i++) {
+    if (Array.isArray(children[i])) {
+      return Array.prototype.concat.apply([], children)
+    }
+  }
+  return children
 }

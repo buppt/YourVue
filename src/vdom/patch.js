@@ -22,7 +22,7 @@ function sameVnode (a, b) {
   }
   return (
       a.key === b.key && 
-      a.tagName=== b.tagName &&
+      a.tag=== b.tag &&
       sameInputType(a, b)
   )
 }
@@ -32,6 +32,9 @@ function sameInputType (a, b) {
   return a.props.type == b.props.type
 }
 function patchVnode(oldVnode, vnode){
+  if (oldVnode === vnode) {
+    return
+  }
   let i
   const data = vnode.props
   if (isDef(data) && isDef(i = data.hooks) && isDef(i = i.prepatch)) {
@@ -110,7 +113,7 @@ function updateChildren(parentElm, oldCh, newCh,){
     
     if (oldStartIdx > oldEndIdx) {
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
-      addVnodes(parentElm, newCh, newStartIdx, newEndIdx)
+      addVnodes(parentElm, newCh, newStartIdx, newEndIdx, refElm)
     } else if (newStartIdx > newEndIdx) {
       removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
     }
@@ -134,9 +137,9 @@ function findIdxInOld (node, oldCh, start, end) {
 function setTextContent(elm, content){
   elm.textContent = content;
 }
-function addVnodes (parentElm, vnodes, startIdx, endIdx) {
+function addVnodes (parentElm, vnodes, startIdx, endIdx, refElm) {
   for (; startIdx <= endIdx; ++startIdx) {
-    createElm(vnodes[startIdx], parentElm, null)
+    createElm(vnodes[startIdx], parentElm, refElm)
   }
 }
 function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
@@ -152,31 +155,32 @@ function createElm (vnode, parentElm, afterElm = undefined) {
   if (createComponent(vnode, parentElm, afterElm)) {
     return
   }
+  let element
   if(!vnode.tag && vnode.text){
-    vnode.elm = document.createTextNode(vnode.text);
-    parentElm.appendChild(vnode.elm)
-    return
-  }
-  let element = document.createElement(vnode.tag)
-  if(vnode.props.attrs){
-    const attrs = vnode.props.attrs
-    for(let key in attrs){
-      element.setAttribute(key, attrs[key])
-    }
-  }
-  if(vnode.props.on){
-    const on = vnode.props.on
-    const oldOn = {}
-    updateListeners(element, on, oldOn, vnode.context)
-  }
-
-  for(let child of vnode.children){
-      if(child instanceof VNode){
-          createElm(child, element)
+    element = document.createTextNode(vnode.text);
+  }else{
+    element = document.createElement(vnode.tag)
+    if(vnode.props.attrs){
+      const attrs = vnode.props.attrs
+      for(let key in attrs){
+        element.setAttribute(key, attrs[key])
       }
-  }
-  if(vnode.text){
-      element.appendChild(document.createTextNode(vnode.text))
+    }
+    if(vnode.props.on){
+      const on = vnode.props.on
+      const oldOn = {}
+      updateListeners(element, on, oldOn, vnode.context)
+    }
+  
+    for(let child of vnode.children){
+        if(child instanceof VNode){
+            createElm(child, element)
+        }else if(Array.isArray(child)){
+          for (let i = 0; i < child.length; ++i) {
+            createElm(child[i], element)
+          }
+        }
+    }
   }
   vnode.elm = element;
   if(isDef(afterElm)){

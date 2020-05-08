@@ -4,7 +4,11 @@ export function generate(ast){
 }
 
 function genElement(el){
-  if (el.tag === 'slot') {
+  if (el.for && !el.forProcessed) {
+    return genFor(el)
+  } else if (el.if && !el.ifProcessed) {
+    return genIf(el)
+  } else if (el.tag === 'slot') {
     return genSlot(el)
   } else {
     let code
@@ -82,4 +86,37 @@ function genSlot(el){
   const slotName = el.slotName || '"default"'
   const children = genChildren(el)
   return `_t(${slotName}${children ? `,${children}` : ''})`
+}
+
+export function genFor (el) {
+  const exp = el.for
+  const alias = el.alias
+  const iterator1 = el.iterator1 ? `,${el.iterator1}` : ''
+  const iterator2 = el.iterator2 ? `,${el.iterator2}` : ''
+  el.forProcessed = true // avoid recursion
+  return `_l((${exp}),` +
+    `function(${alias}${iterator1}${iterator2}){` +
+      `return ${genElement(el)}` +
+    '})'
+}
+
+export function genIf (el){
+  el.ifProcessed = true // avoid recursion
+  return genIfConditions(el.ifConditions.slice())
+}
+function genIfConditions (conditions) {
+  if (!conditions.length) {
+    return '_e()'
+  }
+
+  const condition = conditions.shift()
+  if (condition.exp) {
+    return `(${condition.exp})?${
+      genElement(condition.block)
+    }:${
+      genIfConditions(conditions)
+    }`
+  } else {
+    return `${genElement(condition.block)}`
+  }
 }

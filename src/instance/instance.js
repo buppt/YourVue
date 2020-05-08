@@ -51,6 +51,8 @@ class YourVue{
             if(this._isMounted){
                 callHook(this, 'beforeUpdate')
                 const vnode = this.$options.render()
+                console.log(this.vnode, vnode);
+                
                 patch(this.vnode, vnode)
                 this.vnode = vnode
                 callHook(this, 'updated')
@@ -58,7 +60,6 @@ class YourVue{
                 callHook(this, 'beforeMount')
                 this.vnode = this.$options.render()
                 console.log('render',this.vnode);
-                
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
