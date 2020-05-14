@@ -1,5 +1,5 @@
-import {VNode} from '../vdom/vnode'
-import {componentToVNode} from '../vdom/create-component'
+import { VNode } from '../vdom/vnode'
+import { componentToVNode } from '../vdom/create-component'
 export function initRender(vm){
     const options = vm.$options
     const parentVnode = options._parentVnode
@@ -7,8 +7,6 @@ export function initRender(vm){
     if(parentVnode){
       vm.$slots = resolveSlots(parentVnode.componentOptions.children, renderContext)
     }
-    console.log(vm.$slots);
-    
     vm._c = createElement
     vm._v = createTextVNode
     vm._s = toString

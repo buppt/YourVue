@@ -60,9 +60,9 @@ export class Watcher{
         const vm = this.vm
         try {
             value = this.getter.call(vm, vm)
-          } catch (e) {
-              console.log(e)
-          }
+        } catch (e) {
+            console.log(e)
+        }
         popTarget()
         this.cleanupDeps()
         return value;

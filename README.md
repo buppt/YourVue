@@ -22,7 +22,7 @@
 - [ ] directives
 - [ ] vue-router
 - [ ] vuex
-
+- [ ] platform
 ## Project setup
 ```
 yarn install
