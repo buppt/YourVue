@@ -15,17 +15,11 @@ new YourVue({
       </div>
   `,
   methods:{
-      addCount(){
-          const count = this.count + 1
-          this.setState({
-              count
-          })
-      },
-      decCount(){
-        const count = this.count - 1
-        this.setState({
-            count
-        })
-      }
+    addCount(){
+        this.count += 1
+    },
+    decCount(){
+        this.count -= 1
+    }
   }
 })
