@@ -6,10 +6,11 @@ module.exports = {
     chainWebpack: config => {
         config.when(process.env.NODE_ENV === 'development', config => {
             // use src code
-            // config.entry('app').clear().add('./src/main.js')     
+            config.entry('app').clear().add('./src/main.js')     
             // use old code
             // config.entry('app').clear().add('./oldSrc/1.main_flow/main.js')
-            config.entry('app').clear().add('./oldSrc/2.mvvm/main.js')
+            // config.entry('app').clear().add('./oldSrc/2.mvvm/main.js')
+            // config.entry('app').clear().add('./oldSrc/3.array_observe/main.js')
         })
     }
 }
