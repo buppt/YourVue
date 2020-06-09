@@ -1,4 +1,4 @@
-import {Dep} from './dep'
+import { Dep } from './dep'
 class Observer{
     constructor(data) {
         this.data = data;

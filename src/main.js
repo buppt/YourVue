@@ -10,7 +10,7 @@ const helloWorld = {
   props:['message'],
   template: `
       <div>
-          array: {{this.items}}
+          array: {{items}}
           <div v-if="flag">watch count as v-if flag</div>
           <div v-for="item in items">
             <p>{{item}}</p>

@@ -1,17 +1,24 @@
 import { templateToDom } from './compiler'
 import { observe } from './observer/index'
 import { Watcher} from './observer/watcher'
+
 export default class YourVue{
     constructor(options){
+        this._init(options)
+    }
+    _init(options){
         this.$options = options
-        initEvent(this)
-        initData(this)
-        this.$mount()
+        if (options.data) initData(this)
+        if (options.methods) initMethod(this)
+        if(options.el){
+            this.$mount()
+        }
     }
     $mount(){
-        new Watcher(this, this._render.bind(this), noop)
+        const vm = this
+        new Watcher(vm, vm.update.bind(vm), noop)
     }
-    _render(){
+    update(){
         let el = this.$options.el
         el = el && query(el)
         if(this.$options.template){
@@ -19,6 +26,12 @@ export default class YourVue{
             el.innerHTML = ''
             el.appendChild(this.el)
         }
+    }
+    setState(data){
+        Object.keys(data).forEach(key => {
+            this[key] = data[key]
+        })
+        this.update()
     }
 }
 
@@ -33,12 +46,14 @@ function query(el){
         return el
     }
 }
-function initEvent(vm){
+
+function initMethod(vm){
     let event = vm.$options.methods
     Object.keys(event).forEach(key => {
         vm[key] = event[key].bind(vm)
     })
 }
+
 function initData(vm){
     let data = vm.$options.data
     vm._data = data

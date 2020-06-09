@@ -1,5 +1,5 @@
 
-import {pushTarget, popTarget} from './dep'
+import { pushTarget, popTarget } from './dep'
 export class Watcher{
     constructor(vm, expOrFn, cb){
         this.cb = cb;
