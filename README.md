@@ -23,6 +23,7 @@
 - [ ] vue-router
 - [ ] vuex
 - [ ] platform
+- [ ] ssr
 ## Project setup
 ```
 yarn install

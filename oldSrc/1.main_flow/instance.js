@@ -1,13 +1,22 @@
-import {templateToDom} from './compiler'
+import { templateToDom } from './compiler'
 
 export default class YourVue{
     constructor(options){
-        this.$options = options
-        initEvent(this)
-        initData(this)
-        this.$mount(this.$options.el)
+        this._init(options)
     }
-    $mount(el){
+    _init(options){
+        this.$options = options
+        if (options.data) initData(this)
+        if (options.methods) initMethod(this)
+        if(options.el){
+            this.$mount()
+        }
+    }
+    $mount(){
+        this.update()
+    }
+    update(){
+        let el = this.$options.el
         el = el && query(el)
         if(this.$options.template){
             this.el = templateToDom(this.$options.template, this)
@@ -19,7 +28,7 @@ export default class YourVue{
         Object.keys(data).forEach(key => {
             this[key] = data[key]
         })
-        this.$mount(this.$options.el)
+        this.update()
     }
 }
 
@@ -34,12 +43,14 @@ function query(el){
         return el
     }
 }
-function initEvent(vm){
+
+function initMethod(vm){
     let event = vm.$options.methods
     Object.keys(event).forEach(key => {
         vm[key] = event[key].bind(vm)
     })
 }
+
 function initData(vm){
     let data = vm.$options.data
     vm._data = data
