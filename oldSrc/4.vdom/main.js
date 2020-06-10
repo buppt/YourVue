@@ -12,7 +12,7 @@ new YourVue({
           array: {{items}}
           <div>{{count}}</div>
           <button @click="addCount">addCount</button>
-          <h4>{{message}}</h4>
+          <h4 style="color: red">{{message}}</h4>
           <button @click="decCount">decCount</button>
       </div>
   `,

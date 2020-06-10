@@ -14,5 +14,6 @@ export class VNode{
             count++;
         });
         this.count = count;
+        this.context = context
     }
 }

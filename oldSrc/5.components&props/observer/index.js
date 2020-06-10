@@ -31,11 +31,9 @@ export function observe(value) {
     return new Observer(value);
 }
 
-function defineReactive(value, key, val) {
+export function defineReactive(value, key, val) {
     const dep = new Dep();
     let childOb = observe(val);
-    console.log(childOb);
-    
     Object.defineProperty(value, key, {
         enumerable: true,
         configurable: true,

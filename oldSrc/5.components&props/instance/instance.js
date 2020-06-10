@@ -1,38 +1,54 @@
-import { templateToVnode } from './compiler'
-import { observe } from './observer/index'
-import { Watcher } from './observer/watcher'
-import { patch } from './vdom/patch'
+import { templateToCode } from '../compiler/compiler'
+import { observe } from '../observer/index'
+import { Watcher} from '../observer/watcher'
+import { patch } from '../vdom/patch'
+import { initRender } from './render'
 
 let cid = 1
+
 export default class YourVue{
     constructor(options){
         this._init(options)
     }
     _init(options){
         this.$options = options
-        initEvent(this)
-        initData(this)
+        if(options._isComponent){
+            this._parentListeners = options._parentVnode.componentOptions.listeners
+        }
+        initRender(this)
+        if (options.data) initData(this)
+        if (options.methods) initMethod(this)
         if(options.el){
             this.$mount()
         }
     }
     $mount(){
-        new Watcher(this, this.update.bind(this), noop)
+        const options = this.$options
+        if (!options.render) {
+            let template = options.template
+            if (template) {
+                const code = templateToCode(template)
+                const render = new Function(code).bind(this)
+                options.render = render
+            }
+        }
+        const vm = this
+        new Watcher(vm, vm.update.bind(vm), noop)
     }
     update(){
         if(this.$options.template){
-            if(this.mount){
-                console.log('update')
-                const vnode = templateToVnode(this.$options.template, this)
+            if(this._isMounted){
+                const vnode = this.$options.render()
                 patch(this.vnode, vnode)
                 this.vnode = vnode
             }else{
-                console.log('mount');
-                this.vnode = templateToVnode(this.$options.template, this)
+                this.vnode = this.$options.render()
+                console.log(this.vnode);
+                
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
-                this.mount = true
+                this._isMounted = true
             }
         }
     }
@@ -40,8 +56,6 @@ export default class YourVue{
         extendOptions = extendOptions || {}
         const Super = this
         const SuperId = Super.cid
-        console.log('superid', SuperId);
-        
         const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
         if (cachedCtors[SuperId]) {
             return cachedCtors[SuperId]
@@ -59,8 +73,6 @@ export default class YourVue{
     }
 }
 
-YourVue.cid = 0
-
 function query(el){
     if(typeof el === 'string'){
         const selected = document.querySelector(el)
@@ -72,16 +84,16 @@ function query(el){
         return el
     }
 }
-function initEvent(vm){
-    const event = vm.$options && vm.$options.methods
-    if(event){
-        Object.keys(event).forEach(key => {
-            vm[key] = event[key].bind(vm)
-        })
-    }
+
+function initMethod(vm){
+    let event = vm.$options.methods
+    Object.keys(event).forEach(key => {
+        vm[key] = event[key].bind(vm)
+    })
 }
+
 function initData(vm){
-    let data = vm.$options && vm.$options.data
+    let data = vm.$options.data
     vm._data = data
     data = vm._data = typeof data === 'function'
         ? data.call(vm, vm)
@@ -99,7 +111,7 @@ const sharedPropertyDefinition = {
     set: noop
 }
 
-function proxy (target, sourceKey, key) {
+export function proxy (target, sourceKey, key) {
     sharedPropertyDefinition.get = function proxyGetter () {
         return this[sourceKey][key]
     }
