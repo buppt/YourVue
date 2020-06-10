@@ -5393,3 +5393,4 @@ exports.ssrCompile = compile$1;
 exports.ssrCompileToFunctions = compileToFunctions$1;
 exports.generateCodeFrame = generateCodeFrame;
 exports.parse = parse;
+exports.generate = generate;

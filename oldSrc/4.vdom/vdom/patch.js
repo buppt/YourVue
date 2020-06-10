@@ -142,13 +142,10 @@ function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
 
 function createElm (vnode, parentElm, afterElm = undefined) {
   let element = document.createElement(vnode.tag)
-  console.log('createElement', vnode.tag)
-  
   for(let key in vnode.props){
       if(key === 'on') {
           const on = vnode.props[key]
           Object.keys(on).forEach(event => {
-              console.log(vnode.tag, event, on[event]);
               element.addEventListener(event, on[event])
           })
       } else {

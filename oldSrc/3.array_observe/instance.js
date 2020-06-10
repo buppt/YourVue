@@ -27,12 +27,6 @@ export default class YourVue{
             el.appendChild(this.el)
         }
     }
-    setState(data){
-        Object.keys(data).forEach(key => {
-            this[key] = data[key]
-        })
-        this.update()
-    }
 }
 
 function query(el){
