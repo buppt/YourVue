@@ -3,10 +3,13 @@ import { observe } from '../observer/index'
 import { Watcher} from '../observer/watcher'
 import { patch } from '../vdom/patch'
 import { initRender } from './render'
+import { initComputed } from './computed'
+import { initWatch, watchMixin } from './watch'
+import { initMethod, initEvent, eventsMixin } from './event'
 
 let cid = 1
 
-export default class YourVue{
+class YourVue{
     constructor(options){
         this._init(options)
     }
@@ -15,9 +18,12 @@ export default class YourVue{
         if(options._isComponent){
             this._parentListeners = options._parentVnode.componentOptions.listeners
         }
+        initEvent(this)
         initRender(this)
         if (options.data) initData(this)
         if (options.methods) initMethod(this)
+        if (options.computed) initComputed(this, options.computed)
+        if (options.watch) initWatch(this, options.watch)
         if(options.el){
             this.$mount()
         }
@@ -72,8 +78,11 @@ export default class YourVue{
         return Sub
     }
 }
-
 YourVue.cid = 0
+
+eventsMixin(YourVue)
+watchMixin(YourVue)
+export default YourVue
 
 function query(el){
     if(typeof el === 'string'){
@@ -87,12 +96,6 @@ function query(el){
     }
 }
 
-function initMethod(vm){
-    let event = vm.$options.methods
-    Object.keys(event).forEach(key => {
-        vm[key] = event[key].bind(vm)
-    })
-}
 
 function initData(vm){
     let data = vm.$options.data
@@ -105,8 +108,8 @@ function initData(vm){
     })
     observe(data)
 }
-function noop () {}
-const sharedPropertyDefinition = {
+export function noop () {}
+export const sharedPropertyDefinition = {
     enumerable: true,
     configurable: true,
     get: noop,

@@ -1,12 +1,15 @@
 import { templateToCode } from '../compiler/compiler'
-import { observe } from '../observer/index'
-import { Watcher} from '../observer/watcher'
+import { observe,defineReactive } from '../observer/index'
+import { Watcher } from '../observer/watcher'
+import { Dep } from '../observer/dep'
 import { patch } from '../vdom/patch'
 import { initRender } from './render'
+import { initComputed } from './computed'
+import { initMethod, initEvent, eventsMixin } from './event'
+import { initWatch, watchMixin } from './watch'
 
 let cid = 1
-
-export default class YourVue{
+class YourVue{
     constructor(options){
         this._init(options)
     }
@@ -15,9 +18,12 @@ export default class YourVue{
         if(options._isComponent){
             this._parentListeners = options._parentVnode.componentOptions.listeners
         }
+        initEvent(this)
         initRender(this)
         if (options.data) initData(this)
         if (options.methods) initMethod(this)
+        if (options.computed) initComputed(this, options.computed)
+        if (options.watch) initWatch(this, options.watch)
         if(options.el){
             this.$mount()
         }
@@ -43,8 +49,6 @@ export default class YourVue{
                 this.vnode = vnode
             }else{
                 this.vnode = this.$options.render()
-                console.log(this.vnode);
-                
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
@@ -86,16 +90,8 @@ function query(el){
         return el
     }
 }
-
-function initMethod(vm){
-    let event = vm.$options.methods
-    Object.keys(event).forEach(key => {
-        vm[key] = event[key].bind(vm)
-    })
-}
-
 function initData(vm){
-    let data = vm.$options.data
+    let data = vm.$options && vm.$options.data
     vm._data = data
     data = vm._data = typeof data === 'function'
         ? data.call(vm, vm)
@@ -105,8 +101,8 @@ function initData(vm){
     })
     observe(data)
 }
-function noop () {}
-const sharedPropertyDefinition = {
+export function noop () {}
+export const sharedPropertyDefinition = {
     enumerable: true,
     configurable: true,
     get: noop,
@@ -131,3 +127,9 @@ function mergeOptions(obj1, obj2){
     }
     return obj1
 }
+
+
+
+watchMixin(YourVue)
+eventsMixin(YourVue)
+export default YourVue

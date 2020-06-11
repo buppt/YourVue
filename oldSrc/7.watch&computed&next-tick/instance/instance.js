@@ -3,10 +3,12 @@ import { observe } from '../observer/index'
 import { Watcher} from '../observer/watcher'
 import { patch } from '../vdom/patch'
 import { initRender } from './render'
+import { initComputed } from './computed'
+import { initWatch, watchMixin } from './watch'
 
 let cid = 1
 
-export default class YourVue{
+class YourVue{
     constructor(options){
         this._init(options)
     }
@@ -18,6 +20,8 @@ export default class YourVue{
         initRender(this)
         if (options.data) initData(this)
         if (options.methods) initMethod(this)
+        if (options.computed) initComputed(this, options.computed)
+        if (options.watch) initWatch(this, options.watch)
         if(options.el){
             this.$mount()
         }
@@ -72,8 +76,10 @@ export default class YourVue{
         return Sub
     }
 }
-
 YourVue.cid = 0
+
+watchMixin(YourVue)
+export default YourVue
 
 function query(el){
     if(typeof el === 'string'){
@@ -105,8 +111,8 @@ function initData(vm){
     })
     observe(data)
 }
-function noop () {}
-const sharedPropertyDefinition = {
+export function noop () {}
+export const sharedPropertyDefinition = {
     enumerable: true,
     configurable: true,
     get: noop,
