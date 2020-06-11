@@ -12,9 +12,9 @@
 - [x] props
 - [x] v-if v-for
 - [x] watch computed
+- [x] next-tick
 - [x] event (dom & eventEmitter)
 - [x] lifecycle
-- [x] next-tick
 - [x] slot (普通插槽)
 
 实现中...
