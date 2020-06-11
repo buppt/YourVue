@@ -9,12 +9,12 @@
 - [x] observer
 - [x] vdom
 - [x] component
-- [x] lifecycle
-- [x] next-tick
-- [x] props (parent to child)
+- [x] props
 - [x] v-if v-for
 - [x] watch computed
 - [x] event (dom & eventEmitter)
+- [x] lifecycle
+- [x] next-tick
 - [x] slot (普通插槽)
 
 实现中...
