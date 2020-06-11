@@ -1,33 +1,47 @@
-import { templateToVnode } from './compiler'
-import { observe } from './observer/index'
-import { Watcher } from './observer/watcher'
-import { patch } from './vdom/patch'
+import { templateToCode } from '../compiler/compiler'
+import { observe } from '../observer/index'
+import { Watcher} from '../observer/watcher'
+import { patch } from '../vdom/patch'
+import { initRender } from './render'
+
 export default class YourVue{
     constructor(options){
+        this._init(options)
+    }
+    _init(options){
         this.$options = options
-        initEvent(this)
-        initData(this)
-        this.$mount()
+        initRender(this)
+        if (options.data) initData(this)
+        if (options.methods) initMethod(this)
+        if(options.el){
+            this.$mount()
+        }
     }
     $mount(){
-        let el = this.$options.el
-        this.el = el && query(el)
-        new Watcher(this, this.update.bind(this), noop)
+        const options = this.$options
+        if (!options.render) {
+            let template = options.template
+            if (template) {
+                const code = templateToCode(template)
+                const render = new Function(code).bind(this)
+                options.render = render
+            }
+        }
+        const vm = this
+        new Watcher(vm, vm.update.bind(vm), noop)
     }
     update(){
         if(this.$options.template){
-            if(this.mount){
-                console.log('update')
-                const vnode = templateToVnode(this.$options.template, this)
-                // eslint-disable-next-line no-debugger
-                // debugger
+            if(this._isMounted){
+                const vnode = this.$options.render()
                 patch(this.vnode, vnode)
                 this.vnode = vnode
             }else{
-                console.log('mount');
-                this.vnode = templateToVnode(this.$options.template, this)
+                this.vnode = this.$options.render()
+                let el = this.$options.el
+                this.el = el && query(el)
                 patch(this.vnode, null, this.el)
-                this.mount = true
+                this._isMounted = true
             }
         }
     }
@@ -44,12 +58,14 @@ function query(el){
         return el
     }
 }
-function initEvent(vm){
+
+function initMethod(vm){
     let event = vm.$options.methods
     Object.keys(event).forEach(key => {
         vm[key] = event[key].bind(vm)
     })
 }
+
 function initData(vm){
     let data = vm.$options.data
     vm._data = data

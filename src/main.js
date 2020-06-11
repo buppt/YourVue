@@ -1,5 +1,4 @@
 import YourVue from './instance/instance'
-import Vue from 'vue'
 
 const helloWorld = {
   data: {
