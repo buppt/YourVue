@@ -14,7 +14,8 @@ module.exports = {
             // config.entry('app').clear().add('./oldSrc/4.vdom/main.js')
             // config.entry('app').clear().add('./oldSrc/5.components&props/main.js')
             // config.entry('app').clear().add('./oldSrc/6.if&for/main.js')
-            config.entry('app').clear().add('./oldSrc/7.watch&computed&nextTick/main.js')
+            // config.entry('app').clear().add('./oldSrc/7.watch&computed&nextTick/main.js')
+            config.entry('app').clear().add('./oldSrc/8.event/main.js')
         })
     }
 }

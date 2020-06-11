@@ -73,6 +73,8 @@ export default class YourVue{
     }
 }
 
+YourVue.cid = 0
+
 function query(el){
     if(typeof el === 'string'){
         const selected = document.querySelector(el)

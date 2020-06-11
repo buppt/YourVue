@@ -76,6 +76,7 @@ class YourVue{
         return Sub
     }
 }
+YourVue.cid = 0
 
 watchMixin(YourVue)
 export default YourVue
