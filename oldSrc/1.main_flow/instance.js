@@ -8,7 +8,7 @@ export default class YourVue{
         this.$options = options
         if (options.data) initData(this)
         if (options.methods) initMethod(this)
-        if(options.el){
+        if (options.el) {
             this.$mount()
         }
     }
