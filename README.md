@@ -4,6 +4,8 @@
 
 本项目旨在实现 vue 的主流程，理解 vue 主流程中的细节，省去额外的代码方便查看与学习。
 
+最新的代码在`src`中，各功能的实现过程在`oldSrc`中，可以通过改变`vue.config.js`文件来改变`main.js`的入口进行调试。
+
 - [x] new YourVue
 - [x] compiler
 - [x] observer
@@ -24,6 +26,7 @@
 - [ ] vuex
 - [ ] platform
 - [ ] ssr
+
 ## Project setup
 ```
 yarn install
@@ -35,16 +38,3 @@ yarn serve
 or
 yarn dev
 ```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

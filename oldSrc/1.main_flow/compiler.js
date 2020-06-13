@@ -8,24 +8,6 @@ export function templateToDom(template, app){
     return root
 }
 
-/*
-function parse(template, app){
-    return {
-        tag: 'div',
-        children: [{
-            tag: 'div',
-            textContent: `${app.count}`
-        },{
-            tag: 'button',
-            textContent: 'button',
-            events:{
-                click: 'addCount'
-            }
-        }]
-    }
-}
-*/
-
 function createDom(ast, app){
     if(ast.type === 1){
         const root = document.createElement(ast.tag)
