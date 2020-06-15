@@ -7,6 +7,7 @@
 最新的代码在`src`中，各功能的实现过程在`oldSrc`中，可以通过改变`vue.config.js`文件来改变`main.js`的入口进行调试。
 
 文章会最先更新到公众号：BUPPT。求关注～ 求star～
+<img src='./wx_BUPPT.png' width="300"/>
 
 - [x] new YourVue  <a href="https://github.com/buppt/Video-article-blog/issues/6">从零写一个 Vue（一）主流程实现</a>
 - [x] observer
