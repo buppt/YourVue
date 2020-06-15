@@ -2,11 +2,7 @@ import { Dep } from './dep'
 class Observer{
     constructor(data) {
         this.data = data;
-        if(Array.isArray(data)){
-            observeArray(data)
-        }else{
-            this.walk(data);
-        }
+        this.walk(data);
     }
     walk(data) {
         Object.keys(data).forEach(function(key) {
@@ -46,10 +42,4 @@ function defineReactive(data, key, val) {
             dep.notify();
         }
     });
-}
-
-function observeArray(data){
-    data.forEach(item => {
-        observe(item)
-    })
 }
