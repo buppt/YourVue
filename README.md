@@ -10,7 +10,9 @@
 <img src='./wx_BUPPT.png' width="300"/>
 
 ✅ <a href="https://github.com/buppt/Video-article-blog/issues/6">从零写一个 Vue（一）主流程实现</a>
+
 ✅ <a href="https://github.com/buppt/Video-article-blog/issues/7">从零写一个 Vue（二）双向绑定</a>
+
 ✅ <a href="https://github.com/buppt/Video-article-blog/issues/8">从零写一个 Vue（三）数组监听</a>
 - [x] vdom
 - [x] component
