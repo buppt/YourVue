@@ -104,14 +104,14 @@ function updateChildren(parentElm, oldCh, newCh,){
         }
         newStartVnode = newCh[++newStartIdx]
       }
-    }
+  }
     
-    if (oldStartIdx > oldEndIdx) {
-      refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
-      addVnodes(parentElm, newCh, newStartIdx, newEndIdx, refElm)
-    } else if (newStartIdx > newEndIdx) {
-      removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
-    }
+  if (oldStartIdx > oldEndIdx) {
+    refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
+    addVnodes(parentElm, newCh, newStartIdx, newEndIdx, refElm)
+  } else if (newStartIdx > newEndIdx) {
+    removeVnodes(parentElm, oldCh, oldStartIdx, oldEndIdx)
+  }
 }
 
 function createKeyToOldIdx (children, beginIdx, endIdx) {
