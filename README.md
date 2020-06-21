@@ -28,6 +28,7 @@
 - [x] event (dom & eventEmitter)
 - [x] lifecycle
 - [x] slot (普通插槽)
+- [x] v-model
 
 实现中...
 - [ ] keep-alive
