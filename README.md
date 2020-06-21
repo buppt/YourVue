@@ -19,20 +19,17 @@
 
 ✅ <a href="https://mp.weixin.qq.com/s/GhfGgAyvW1fX_s2r8bygpQ">从零写一个 Vue（五）DOM 生成与更新</a>
 
+✅ <a href="https://github.com/buppt/Video-article-blog/issues/11">从零写一个 Vue（六）组件化</a>
 
-- [x] component
-- [x] props
 - [x] v-if v-for
 - [x] watch computed
 - [x] next-tick
 - [x] event (dom & eventEmitter)
-- [x] lifecycle
 - [x] slot (普通插槽)
 - [x] v-model
 
 实现中...
 - [ ] keep-alive
-- [ ] directives
 - [ ] vue-router
 - [ ] vuex
 - [ ] platform
