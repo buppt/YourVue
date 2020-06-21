@@ -8,6 +8,7 @@ import { initRender } from './render'
 import { initComputed } from './computed'
 import { initMethod, initEvent, eventsMixin } from './event'
 import { initWatch, watchMixin } from './watch'
+import { initUse } from 'use'
 
 let cid = 1
 class YourVue{
@@ -139,4 +140,5 @@ function mergeOptions(obj1, obj2){
 
 watchMixin(YourVue)
 eventsMixin(YourVue)
+initUse(YourVue)
 export default YourVue
