@@ -14,8 +14,10 @@ const helloWorld = {
             <button @click="addCount">addCount</button>
             <h4 style="color: red">{{message}}</h4>
             <button @click="decCount">decCount</button>
-            <div v-if="flag">count as v-if flag</div>
-            <div v-for="item in items">
+            <div v-if="count===1">count === 1</div>
+            <div v-else-if="count===2">count === 2</div>
+            <div v-else>count != 1 && count != 2</div>
+            <div v-for="(item, key, index) in items">
                 <p>{{item}}</p>
             </div>
         </div>
