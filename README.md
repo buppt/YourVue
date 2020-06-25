@@ -21,7 +21,8 @@
 
 ✅ <a href="https://github.com/buppt/Video-article-blog/issues/11">从零写一个 Vue（六）组件化</a>
 
-- [x] v-if v-for
+✅ <a href="https://github.com/buppt/Video-article-blog/issues/12">从零写一个 Vue（七）v-if 和 v-for</a>
+
 - [x] watch computed
 - [x] next-tick
 - [x] event (dom & eventEmitter)
