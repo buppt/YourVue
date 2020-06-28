@@ -170,12 +170,6 @@ function createElm (vnode, parentElm, afterElm = undefined) {
         element.setAttribute(key, attrs[key])
       }
     }
-    if(vnode.props.domProps){
-      const attrs = vnode.props.domProps
-      for(let key in attrs){
-        element.setAttribute(key, attrs[key])
-      }
-    }
     if(vnode.props.on){
       const on = vnode.props.on
       const oldOn = {}
@@ -193,6 +187,7 @@ function createElm (vnode, parentElm, afterElm = undefined) {
     }
   }
   vnode.elm = element;
+  updateDOMProps({}, vnode)
   if(isDef(afterElm)){
     insertBefore(parentElm,element,afterElm)
   }else if(parentElm){
