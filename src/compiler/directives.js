@@ -113,10 +113,22 @@ function addHandler (
     }
   
     el.plain = false;
+}
+export function html (el, dir) {
+  if (dir.value) {
+    addProp(el, 'innerHTML', `_s(${dir.value})`, dir)
   }
-  
+}
+function text (el, dir) {
+  if (dir.value) {
+    addProp(el, 'textContent', `_s(${dir.value})`, dir)
+  }
+}
+
 export default {
     on,
     bind,
-    model
+    model,
+    html,
+    text
 }

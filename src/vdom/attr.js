@@ -44,9 +44,19 @@ export const updateDOMProps = (oldVnode, vnode) => {
     }
     for (key in props) {
         cur = props[key]
+        if (key === 'textContent' || key === 'innerHTML') { // v-html 和 v-text
+            if (vnode.children) { vnode.children.length = 0; } //删除字节点
+            if (cur === oldProps[key]) { continue }
+            if (elm.childNodes.length === 1) {
+              elm.removeChild(elm.childNodes[0]);
+            }
+        }
+        
         if (key === 'value' && elm.tagName !== 'PROGRESS') {
           const strCur = !(cur) ? '' : String(cur)
           elm.value = strCur
-        }
+        } else if(cur !== oldProps[key]){
+            elm[key] = cur
+          }
     }
 }

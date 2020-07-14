@@ -17,6 +17,7 @@ module.exports = {
             // config.entry('app').clear().add('./oldSrc/7.watch&computed&nextTick/main.js')
             // config.entry('app').clear().add('./oldSrc/8.event/main.js')
             // config.entry('app').clear().add('./oldSrc/9.slot/main.js')
+            // config.entry('app').clear().add('./oldSrc/10.directives/main.js')
         })
     }
 }

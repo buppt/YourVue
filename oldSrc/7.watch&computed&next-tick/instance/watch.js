@@ -1,16 +1,16 @@
 import { Watcher } from '../observer/watcher'
 
 export function initWatch(vm, watch){
-    for (const key in watch) {
-        const handler = watch[key]
-        if (Array.isArray(handler)) {
-          for (let i = 0; i < handler.length; i++) {
-            createWatcher(vm, key, handler[i])
-          }
-        } else {
-          createWatcher(vm, key, handler)
+  for (const key in watch) {
+      const handler = watch[key]
+      if (Array.isArray(handler)) {
+        for (let i = 0; i < handler.length; i++) {
+          createWatcher(vm, key, handler[i])
         }
+      } else {
+        createWatcher(vm, key, handler)
       }
+    }
 }
 
 function createWatcher(vm, expOrFn, handler, options){

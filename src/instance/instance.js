@@ -40,6 +40,8 @@ class YourVue{
                 const code = templateToCode(template)
                 const render = new Function(code).bind(this)
                 options.render = render
+                console.log(code);
+                
             }
         }
         const vm = this
@@ -56,6 +58,8 @@ class YourVue{
             }else{
                 callHook(this, 'beforeMount')
                 this.vnode = this.$options.render()
+                console.log(this.vnode);
+                
                 let el = this.$options.el
                 this.el = el && query(el)
                 patch(this.vnode, null, this.el)
@@ -140,5 +144,5 @@ function mergeOptions(obj1, obj2){
 
 watchMixin(YourVue)
 eventsMixin(YourVue)
-initUse(YourVue)
+// initUse(YourVue)
 export default YourVue

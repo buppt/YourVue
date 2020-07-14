@@ -42,7 +42,10 @@ const helloWorld = {
 new YourVue({
   el: '#app',
   components:{ helloWorld },
-  data:{ message:'parent message' },
+  data:{
+    message:'parent message',
+    html: '<p>p标签</p>'
+  },
   template: `
     <div>
       <hello-world :message="message" @select="parentHandler">
@@ -53,6 +56,8 @@ new YourVue({
       </hello-world>
       <button @click="change">change parent message</button>
       <input v-model="message"/>
+      <div v-text="html"></div>
+      <div v-html="html"></div>
     </div>
   `,
   methods:{

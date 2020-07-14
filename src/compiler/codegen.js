@@ -132,7 +132,9 @@ function genDirectives(el){
   for (i = 0, l = dirs.length; i < l; i++) {
     dir = dirs[i]
     const gen = directives[dir.name]
-    gen(el, dir)
+    if(gen){
+      gen(el, dir)
+    }
     res += `{name:"${dir.name}",rawName:"${dir.rawName}"${
       dir.value ? `,value:(${dir.value}),expression:${JSON.stringify(dir.value)}` : ''
     }${

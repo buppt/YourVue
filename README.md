@@ -27,7 +27,7 @@
 - [x] next-tick
 - [x] event (dom & eventEmitter)
 - [x] slot (普通插槽)
-- [x] v-model
+- [x] Directives（v-model、v-html、v-text）
 
 实现中...
 - [ ] keep-alive
